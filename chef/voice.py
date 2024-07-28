@@ -5,10 +5,18 @@ from elevenlabs import VoiceSettings
 from elevenlabs.client import ElevenLabs
 import pygame
 import warnings
+from dotenv import load_dotenv
 warnings.filterwarnings("ignore", category=UserWarning)
 
 def tts(text):
-    client = ElevenLabs(api_key="sk_48bfa043107801a1bdc4d352826f33892ef406b38420ab10")
+    # Load environment variables from .env file
+    load_dotenv()
+
+    # Get the API key from the environment variables
+    api_key = os.getenv("ELEVENLABS_API_KEY")
+
+    # Create the ElevenLabs client with the API key
+    client = ElevenLabs(api_key=api_key)
 
 
     def text_to_speech_stream(text: str) -> IO[bytes]:
@@ -69,6 +77,6 @@ def tts(text):
     # Quit pygame mixer
     pygame.mixer.quit()
 
-#Example usage
-# if __name__ == "__main__":
-#     tts("This is a test of the much faster speech at 2.5x speed. Is it clear and understandable?")
+# Example usage
+if __name__ == "__main__":
+    tts("This is a test of the much faster speech at 2.5x speed. Is it clear and understandable?")
