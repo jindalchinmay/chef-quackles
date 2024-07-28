@@ -4,6 +4,12 @@ from openai import OpenAI
 import threading
 import time
 import os
+import requests
+import pymongo
+import os 
+from dotenv import load_dotenv
+from voice import tts
+load_dotenv()
 
 # Initialize the OpenAI client
 client = OpenAI(api_key="sk-proj-Rumim2JuVmQwGGY8i2tAT3BlbkFJzL5s3JaOdTEn4GxbgyhR")
@@ -20,7 +26,11 @@ WAVE_OUTPUT_FILENAME = "output.wav"
 p = pyaudio.PyAudio()
 
 
-# TODO - clear database when this program is called
+client2 = pymongo.MongoClient(os.getenv("MONGODB_URI"))
+db = client2["prompts"]
+collection = db["prompts"]
+print(collection)
+collection.delete_many({})
 
 def list_audio_devices():
     info = p.get_host_api_info_by_index(0)
@@ -84,7 +94,7 @@ def transcribe_audio():
                     file=audio_file,
                     language="en"  # Specify English language
                 )
-            if 'chef' in transcript.text.lower() and state == False:
+            if ('chef' in transcript.text.lower() or 'hey' in transcript.text.lower()) and state == False:
                 state = True
                 index = 1
                 prompt += transcript.text
@@ -95,7 +105,12 @@ def transcribe_audio():
                 if ('please' in transcript.text.lower()):
                     state = False
                     print(f"Transcription: {prompt}")
-                    # CALL API HERE with the current prompt string
+                    url = "http://172.20.10.12:8000/api/duck"
+                    x = requests.post(url, json = {"prompt": prompt}, headers={"Content-Type": "application/json"})
+                    data_voice = x.json().get("data")
+                    print(data_voice)
+                    tts(data_voice)
+                    # tts(prompt)
                     prompt = ""
             print(f"Transcription: {prompt}")
             os.remove(WAVE_OUTPUT_FILENAME)
@@ -110,7 +125,7 @@ transcription_thread.start()
 
 try:
     while True:
-        time.sleep(0.001)
+        time.sleep(0.01)
 except KeyboardInterrupt:
     print("* Finished recording")
     stream.stop_stream()
