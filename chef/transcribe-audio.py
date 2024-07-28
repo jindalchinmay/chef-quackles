@@ -106,12 +106,12 @@ def transcribe_audio():
                 if ('please' in transcript.text.lower()):
                     state = False
                     print(f"Transcription: {prompt}")
-                    # url = "http://172.20.10.12:8000/api/duck"
-                    # x = requests.post(url, json = {"prompt": prompt}, headers={"Content-Type": "application/json"})
-                    # data_voice = x.json().get("data")
-                    # print(data_voice)
-                    # tts(data_voice)
-                    tts(prompt)
+                    url = "http://172.20.10.12:8000/api/duck"
+                    x = requests.post(url, json = {"prompt": prompt}, headers={"Content-Type": "application/json"})
+                    data_voice = x.json().get("data")
+                    print(data_voice)
+                    tts(data_voice)
+                    #tts(prompt)
                     prompt = ""
             print(f"Transcription: {prompt}")
             os.remove(WAVE_OUTPUT_FILENAME)
