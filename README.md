@@ -1,5 +1,5 @@
 ## Inspiration 💡
-In our own households we saw how much food goes to waste just because we don’t know its there and how to use it. Also, all of us are pretty bad at cooking. So we thought of making a fun solution to this problem.
+In our own households we saw how much food goes to waste just because we don’t know its there and how to use it. Also, all of us are pretty bad at cooking. So, we thought of making a fun solution to this problem.
 
 ## What it does 🍳
 After saying “Hey Chef” just ask Chef whatever you’d like to do in your kitchen. It will know exactly what’s in your fridge and get context by fetching real recipes from a vector database! Chef Quackles also remembers message history so that you can cook alongside it in real time, asking any questions related to nutrition, steps, or what to do if you put in too many eggs…
