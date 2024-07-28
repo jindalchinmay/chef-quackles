@@ -170,6 +170,7 @@ cython_debug/
 .realvenv
 *.pyc
 *.png
+!media/*
 *.jpg
 .env
 /recipe-app/node_modules/*
