@@ -11,11 +11,9 @@ from dotenv import load_dotenv
 from voice import tts
 load_dotenv()
 
-# Initialize the OpenAI client
 print(os.getenv("OPENAI_API_KEY_REAL"))
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY_REAL"))
 
-# Audio recording parameters
 CHUNK = 1024
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
@@ -23,7 +21,6 @@ RATE = 16000
 RECORD_SECONDS = 2
 WAVE_OUTPUT_FILENAME = "output.wav"
 
-# Initialize PyAudio
 p = pyaudio.PyAudio()
 
 
@@ -38,14 +35,14 @@ def list_audio_devices():
     num_devices = info.get('deviceCount')
     for i in range(num_devices):
         device_info = p.get_device_info_by_host_api_device_index(0, i)
-        if device_info.get('maxInputChannels') > 0:  # if it has input channels, it's an input device
+        if device_info.get('maxInputChannels') > 0:
             print(f"Input Device id {i} - {device_info.get('name')}")
 
 def get_webcam_device_index():
     list_audio_devices()
     while True:
         try:
-            device_index = 0  # You can change this back to user input if needed
+            device_index = 0 
             device_info = p.get_device_info_by_host_api_device_index(0, device_index)
             if device_info.get('maxInputChannels') > 0:
                 return device_index
@@ -54,10 +51,8 @@ def get_webcam_device_index():
         except ValueError:
             print("Invalid input. Please enter a number.")
 
-# Get the device index for the external webcam
 webcam_device_index = get_webcam_device_index()
 
-# Open stream with the selected device
 stream = p.open(format=FORMAT,
                 channels=CHANNELS,
                 rate=RATE,
@@ -74,7 +69,6 @@ def record_audio():
             data = stream.read(CHUNK)
             frames.append(data)
         
-        # Save the recorded data as a WAV file
         wf = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
         wf.setnchannels(CHANNELS)
         wf.setsampwidth(p.get_sample_size(FORMAT))
@@ -93,7 +87,7 @@ def transcribe_audio():
                 transcript = client.audio.transcriptions.create(
                     model="whisper-1", 
                     file=audio_file,
-                    language="en"  # Specify English language
+                    language="en" 
                 )
             if ('chef' in transcript.text.lower() or 'hey' in transcript.text.lower()) and state == False:
                 state = True
@@ -111,13 +105,12 @@ def transcribe_audio():
                     data_voice = x.json().get("data")
                     print(data_voice)
                     tts(data_voice)
-                    #tts(prompt)
+                    # tts(prompt)
                     prompt = ""
             print(f"Transcription: {prompt}")
             os.remove(WAVE_OUTPUT_FILENAME)
         time.sleep(0.1)
 
-# Start recording and transcription threads
 recording_thread = threading.Thread(target=record_audio)
 transcription_thread = threading.Thread(target=transcribe_audio)
 
